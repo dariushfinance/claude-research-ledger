@@ -1,0 +1,9 @@
+event,trade_id,bot,brief_date,ticker,class,avg,Q,V,S,R,ev_pct,verdict,rank,fill_date,fill_price,shares,invest_usd,spy_price,spy_shares,notes
+NO_TRADE,CLAUDE-KZ-20261007-NONE,KZ,2026-10-07,,,,,,,,,,,,,,,,,backfill no buy-zone name
+DECISION,CLAUDE-BOD-20261007-HRMY,BOD,2026-10-07,HRMY,SECONDARY,7.88,8.5,9.5,7.75,5.75,,WATCH,1,,,,50,,,backfill v2.2 run 13:00 CET
+FILL,CLAUDE-BOD-20261007-HRMY,BOD,2026-10-07,HRMY,,,,,,,,,,2026-10-07,39.27,1.273237,50,775.77,0.064452,backfill
+NO_TRADE,CLAUDE-KZ-20261008-NONE,KZ,2026-10-08,,,,,,,,,,,,,,,,,backfill no buy-zone name
+DECISION,CLAUDE-BOD-20261008-EXEL,BOD,2026-10-08,EXEL,SECONDARY,7.31,8.0,7.75,7.25,6.25,,WATCH,2,,,,50,,,backfill rank1 HRMY held
+FILL,CLAUDE-BOD-20261008-EXEL,BOD,2026-10-08,EXEL,,,,,,,,,,2026-10-08,58.07,0.861030,50,774.86,0.064528,backfill
+DECISION,CLAUDE-KZ-20261009-CRUS,KZ,2026-10-09,CRUS,TOP3,6.88,7.5,7.0,6.0,7.0,7.2,KAUFZONE,,,,,50,,,backfill pending open 2026-10-09
+DECISION,CLAUDE-BOD-20261009-PLAB,BOD,2026-10-09,PLAB,SECONDARY,6.94,6.75,5.0,7.0,9.0,,WATCH,3,,,,50,,,backfill rank1 HRMY + rank2 EXEL held - pending
