@@ -14,9 +14,52 @@ Append-only, public ledger of two **simulated** paper-trading bots that act on a
 
 ## Files
 - `data/paper-trades.csv`: events (`DECISION`, `FILL`, `NO_TRADE`), unique per (`trade_id`, `event`). A `DECISION` without a `FILL` is pending.
-- `data/paper-snapshots.csv`: daily valuation per bot.
+- `data/paper-snapshots.csv`: one valuation row per bot per trading day. See the
+  contract below.
 
 Rows are never edited or deleted. Corrections are made by appending new rows; the Git history is the audit trail.
+
+## `paper-snapshots.csv` contract
+
+One row per (`date`, `bot`) per US trading day, appended after the US close.
+This file is the **only** source of a daily return series: without it there is no
+equity curve, no drawdown, no volatility and no Sharpe, and a missing day cannot
+be reconstructed later without pulling prices from somewhere else.
+
+Unlike the trade events, snapshots are **derived, not ledger**. Re-publishing a
+row for a date that already exists overwrites it, which is the intended way to
+fix a bad valuation. The key is (`date`, `bot`).
+
+| Column | Meaning |
+|---|---|
+| `date` | `YYYY-MM-DD`, the US trading day the valuation is as of. |
+| `bot` | `KZ` or `BOD`. |
+| `trades` | Number of fills held at the close of that day. |
+| `invested` | Cumulative USD committed: 50 x `trades`. |
+| `cash` | **Leave empty.** There is no cash position; see the rules above. |
+| `holdings_value` | Market value of the open positions at that day's close, USD. |
+| `total_value` | Same as `holdings_value`. Kept for compatibility. |
+| `pnl_pct` | `(holdings_value - invested) / invested * 100`. |
+| `spy_value` | Value of the matched SPY shares at the same close, USD. |
+| `spy_pnl_pct` | Same formula, against the SPY money committed. |
+| `vs_spy_pp` | `pnl_pct - spy_pnl_pct`, in percentage points. |
+
+Rules for writing a row:
+
+- **A day with no fills still gets a row.** A gap in the series is
+  indistinguishable from a flat day when the returns are computed, and the
+  difference matters.
+- **An empty cell is allowed and is stored as NULL, never as 0.** If a position
+  cannot be priced that day, leave `holdings_value` and everything derived from
+  it empty rather than valuing it at zero.
+- **Only US trading days.** No rows on weekends or market holidays; a zero-return
+  day that was not a trading day distorts an annualised figure.
+- Before the first bot has any fill, `invested` is 0 and the percentage columns
+  are empty, not 0.
+
+Validate the file before trusting it: in the Quantfoli repo,
+`npx tsx scripts/paper-dryrun.ts` parses both CSVs from this repo and prints
+valid/rejected counts without writing anything.
 
 ## Two things that must not change
 
